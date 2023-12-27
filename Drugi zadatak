@@ -33,13 +33,13 @@ read_bytes = read(cld2par[0], buffer, MAX_SIZE);
 check_error(read_bytes != -1, "read");
 buffer[read_bytes] = 0;
 
-printf("Transformisan tekst: %s\n", buffer);
-
 int status;
 wait(&status);
 
 if(WIFEXITED(status) || WEXITSTATUS(status) != 0){
   printf("Neuspeh\n");
+}else{
+  printf("Transformisan tekst: %s\n", buffer);
 }
 
 close(fd);

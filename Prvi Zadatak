@@ -3,6 +3,8 @@
 //PRVO PIPE pa FORK
 //execl ne koristimo kada ne znamo koliko treba zareza, tj elemenata 
 //execlp P pretrazuje pet promenljivu, a execl samo radni direktorijum
+//getline sam alocira
+//%*d odbacuje
 
 #define MAX_SIZE 8192
 int main(int argc, char** argv){
@@ -16,6 +18,20 @@ int main(int argc, char** argv){
     
     check_error(.....);
     check_erorr(-1 != execlp("ls", "ls", "-l", NULL), "execlp");
+  //ovde nema exit-a Nije greska, ali nema potrebe zbog ovoga gore
   }
+  close(filedes[1]);
+  FILE* ulaz = fdopen(filedes[0], "-r");
+  check_error(ulaz != NULL, "fdopen");
+  char *linija = NULL;
+  size_t n = 0;
+  while(getline(&linija, &n, ulaz) != EOF){
+    int broj;
+    sscanf(linija, "%*s%*d%*s%*s%d", &broj);
+    printf("%d\n", broj);
+  }
+free(linija);
+close(filedes[0]);
+return 0;
 
 }

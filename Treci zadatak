@@ -1,0 +1,54 @@
+#beskonacnoj petlji ucitava cele pozitivne brojeve nakon ucitavanja ceka na signal SIGUSR1 kvadrat, usr2 kub, sigint obrnut broj, sigquit izlazi bez obrade   
+poslednjeg broja. Naredni signal nece biti poslat dok se ne obradi tekuci broj
+
+#DEFINE _DEFAULT_SOURCE
+
+bool sigusr1, sigusr2, sigint, shouldTerminate;
+
+void obradi_signal(int signum){
+  switch(signum){
+    case SIGUSR1:
+      sigusr1 = true;
+      break;
+    case SIGUSR2:
+      sigusr2 = true;
+      break;
+    case SIGINT:
+      sigint = true;
+      break;
+    case SIGQUIT:
+      shouldTerminate = true;
+      break:
+    default:
+      break;
+  }
+}
+
+int main(int argc, char** argv){
+  int broj;
+
+  check_error(signal(SIGUSR1, obradi_signal) != SIG_ERR, "signal");
+  signal(SIGUSR2, obradi_signal); //isto za ovde
+  signal(SIGINT, obradi_signal);
+  signal(SIGQUIT, obradi_signal);
+  while(1){
+    scanf("%d", &broj);
+
+    pause();
+
+    if(sigusr1){
+      printf("%d\n", broj*broj);
+      sigusr1 = false;
+    }else if(sigusr2){
+      printf("%d\n", broj*broj*broj);
+      sigusr2 = false;
+    }else if(sigint){
+      while(broj){
+        printf("%d", broj%10);
+        broj /= 10;
+      }else if(shouldTerminate){
+        break;
+      }
+}
+return 0;
+}

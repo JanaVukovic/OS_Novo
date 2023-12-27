@@ -1,0 +1,38 @@
+#postavka: Milivoje sa Dragutin bezbedno zameniti Bice iste duzine reci kako ne bismo pamtili offset
+
+int main(int argc, char** argv){
+  check_error(argc >= 2, "
+int fd = open(argv[1], O_RDWR);
+check_error(fd != -1, "open");
+
+FILE* ulaz = fdopen(fd, "r+");                    //w i w+ brisu sadrzaj
+check_error(ulaz != NULL, "fdopen");
+
+char rec[MAX_SIZE];
+while(fscanf(ulaz, "%s", rec) == 1){
+  if(strcmp(rec, "Milivoje") == 0){
+    struct flock katanac;
+    katanac.l_type = F_WRLOCK;
+    katanac.l_start = ftell(ulaz) - strlen();
+    katanac.l_len = -strlen(rec);
+    katanac.l_whence = SEEK_SER;
+
+    check_erorr(fcntl(fd, F_GETLK, &katanac) != -1, "fcntl");
+
+    if(katanac.l_type == F_UNLCK){
+      katanac.l_type = F_WRLOCK;
+      check_error(fcntl(fd, F_SETLK, &katanac) != -1, "fcntl");
+
+      fseek(ulaz, ftell(ulaz), strlen(rec), SEEK_SET);
+      fprintf(ulaz, "Dragutin");
+
+      katanac.l_type = F_UNLCK;
+      check_error(fcntl(fd, F_SETLK, &katanac) != -1, "fcntl");
+    }else{
+      printf("Locked: %s %lf %d\n", katanac.l_type == F_RDLCK ? "r":"w", katanac.l_start, katanac.l_pid);
+    }
+  }
+}
+
+return 0;
+}

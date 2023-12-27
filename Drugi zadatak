@@ -35,7 +35,13 @@ buffer[read_bytes] = 0;
 
 printf("Transformisan tekst: %s\n", buffer);
 
-wait(NULL);
+int status;
+wait(&status);
+
+if(WIFEXITED(status) || WEXITSTATUS(status) != 0){
+  printf("Neuspeh\n");
+}
+
 close(fd);
 close(cld2par[0]);
 return 0;

@@ -5,6 +5,7 @@
 //execlp P pretrazuje pet promenljivu, a execl samo radni direktorijum
 //getline sam alocira
 //%*d odbacuje
+//. ispred imena file-a su skriveni fajlovi Sadrze konfiguracije kojima nam nije potreban pristup
 
 #define MAX_SIZE 8192
 int main(int argc, char** argv){
@@ -20,18 +21,20 @@ int main(int argc, char** argv){
     check_erorr(-1 != execlp("ls", "ls", "-l", NULL), "execlp");
   //ovde nema exit-a Nije greska, ali nema potrebe zbog ovoga gore
   }
-  close(filedes[1]);
-  FILE* ulaz = fdopen(filedes[0], "-r");
-  check_error(ulaz != NULL, "fdopen");
-  char *linija = NULL;
-  size_t n = 0;
-  while(getline(&linija, &n, ulaz) != EOF){
-    int broj;
-    sscanf(linija, "%*s%*d%*s%*s%d", &broj);
-    printf("%d\n", broj);
-  }
-free(linija);
-close(filedes[0]);
+ close(filedes[1]);
+FILE* ulaz = fdopen(filedes[0], "-r");
+check_error(ulaz != NULL, "fdopen");
+char *linija = NULL;
+size_t n = 0;
+while(getline(&linija, &n, ulaz) != EOF){
+  int broj;
+  sscanf(linija, "%*s%*d%*s%*s%d", &broj);
+  printf("%d\n", broj);
+  // Getline koristi realloc u slucaju da je prethodno alocirano
+}  
+wait(NULL); //ovde da bi se ocistile informacije o procesu, a inace da ne bi postalo zombie proces, NULL ako ne treba status o procesu    Cisti scanner
+// wait(&status);    
+free(linija);        //dealocira
+fclose(filedes[0]);  //Ne sme oba zbog nedefinisanog ponasanja Zatvra sto se vezuje za file descriptor
 return 0;
-
 }

@@ -1,5 +1,6 @@
 #Postavka: Treba da exec-uje a sa A, roditelj salje detetu, a dete vraca 
 //tr kada se zadaju dva karaktera/stringa I svaki put kad se zada neki tekst on zameni svako pojavljivanje prvog stringa drugim stringom
+//ako parent mora da exit-uje sa istim statusom onda (exit(status))
 #defne MAX_SIZE 8192
 int main(){
   int par2cld[2];

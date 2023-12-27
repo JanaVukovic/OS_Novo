@@ -1,1 +1,21 @@
 //Postavka:
+//Napisati program koji pokrece koandnu ls -l u dete procesu (fork() + exec()), preusmerava standardni izlaz te komande u PIPE, filtrira ovaj sadrzaj tako da ispisuje samo petu kolonu izlaza ove komandne (velicina fajla).
+//PRVO PIPE pa FORK
+//execl ne koristimo kada ne znamo koliko treba zareza, tj elemenata 
+//execlp P pretrazuje pet promenljivu, a execl samo radni direktorijum
+
+#define MAX_SIZE 8192
+int main(int argc, char** argv){
+  int filedes[2];
+  check_error(pipe(filedes) != -1, "pipe_error");
+  int childPid = fork();
+  check error(childPid != -1, "fork");
+  if(childPid == 0){
+    close(filedes[0]);
+    dup2(filedes[1], STDOUT_FILENO);
+    
+    check_error(.....);
+    check_erorr(-1 != execlp("ls", "ls", "-l", NULL), "execlp");
+  }
+
+}
